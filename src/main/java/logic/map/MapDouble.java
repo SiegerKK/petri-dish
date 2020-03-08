@@ -36,6 +36,12 @@ public abstract class MapDouble {
     public void setValue(int id, double value){
         map.get(id).value = value;
     }
+    public void increaseValue(int x, int y, double value){
+        map.get(y * sizeX + x).value += value;
+    }
+    public void increaseValue(int id, double value){
+        map.get(id).value += value;
+    }
 
     public double getValue(int x, int y){
         return map.get(y * sizeX + x).value;
