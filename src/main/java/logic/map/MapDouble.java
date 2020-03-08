@@ -6,7 +6,7 @@ import utils.DoubleBox;
 import java.util.ArrayList;
 import java.util.Random;
 
-abstract class MapDouble {
+public abstract class MapDouble {
     protected ArrayList<DoubleBox> map;
     private int sizeX, sizeY;
     //ONLY FOR PRINT
@@ -105,7 +105,8 @@ abstract class MapDouble {
         }
 
         //Printing
-        System.out.println(name + " | " + total);
+        ConsoleManager.writeln(name + " | " + total);
+        ConsoleManager.writeln();
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
                 if(table[i][j] > 9)
@@ -123,8 +124,18 @@ abstract class MapDouble {
                 else if(table[i][j] < 0)
                     System.out.print(".");
             }
-            System.out.println();
+            ConsoleManager.writeln();
         }
+    }
+    public static void printMaps(ArrayList<MapDouble> maps, int sizeX, int sizeY){
+        for (int i = 0; i < maps.size(); i++) {
+            MapDouble mapDouble = maps.get(i);
+            mapDouble.printConsole(sizeX, sizeY);
+            ConsoleManager.shift += sizeX + 2;
+            ConsoleManager.moveCursorUp(sizeY + 2);
+        }
+        ConsoleManager.shift = 0;
+        ConsoleManager.moveCursorDown(sizeY + 2);
     }
 
     public void reset(double value){

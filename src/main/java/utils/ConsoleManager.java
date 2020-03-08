@@ -31,6 +31,8 @@ public class ConsoleManager {
     static public final String MOVE_LEFT = "\u001b[1D";
     static public final String MOVE_BEGIN = "\u001b[1000D";
 
+    static public int shift = 0;
+
     /**
      * Write str to terminal
      * @param str
@@ -51,13 +53,16 @@ public class ConsoleManager {
      */
     static public synchronized void writeln(){
         System.out.print("\n");
+        moveCursorRight(shift);
     }
     /**
      * Write str to terminal
      * @param str
      */
     static public synchronized void writeln(Object str){
-        System.out.print(str + "\n");
+        System.out.println();
+        moveCursorRight(shift);
+        System.out.print(str);
     }
     /**
      * Write colored str to terminal
@@ -65,7 +70,9 @@ public class ConsoleManager {
      * @param color
      */
     static public synchronized void writeln(Object str, String color){
-        System.out.print(color + str + COLOR_DEFAULT + "\n");
+        System.out.println();
+        moveCursorRight(shift);
+        System.out.print(color + str + COLOR_DEFAULT);
     }
     /**
      * Write str to terminal from begin of line

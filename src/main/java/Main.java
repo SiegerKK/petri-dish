@@ -9,6 +9,7 @@ public class Main {
 
     public static void testCode(){
         Game game = new Game();
+        game.init();
         game.start(300);
     }
 }
