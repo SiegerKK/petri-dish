@@ -5,7 +5,7 @@ import logic.map.MapFood;
 import logic.map.MapGas;
 import logic.map.MapLight;
 import logic.microbe.Gene;
-import logic.microbe.Genom;
+import logic.microbe.Genome;
 import logic.microbe.Microbe;
 import utils.ConsoleManager;
 
@@ -24,19 +24,19 @@ public class Game {
     public final int SIZE = 40;
 
     public void init(){
-        mapOxygen = new MapGas(SIZE, SIZE, 50.0, "O2", 0.0, 100.0, 1.0);
-        mapCO2 = new MapGas(SIZE, SIZE, 0.0, "CO2", 0.0, 100.0, 1.0);
+        mapOxygen = new MapGas(SIZE, SIZE, 600.0, "O2", 0.0, 1000.0, 1.0);
+        mapCO2 = new MapGas(SIZE, SIZE, 600.0, "CO2", 0.0, 1000.0, 1.0);
         //------Randomizer--------//
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            mapCO2.setValue(Math.abs(random.nextInt()%SIZE), Math.abs(random.nextInt()%SIZE), random.nextDouble()*1500+500);
-        }
+//        Random random = new Random();
+//        for (int i = 0; i < 10; i++) {
+//            mapCO2.setValue(Math.abs(random.nextInt()%SIZE), Math.abs(random.nextInt()%SIZE), random.nextDouble()*50 + 50);
+//        }
         //------------------------//
 
         mapLight = new MapLight(SIZE, SIZE, "Light");
-        mapLight.setTemplate(MapLight.TEMPLATE_50_CENTER);
+        mapLight.setTemplate(MapLight.TEMPLATE_50_CENTER_GRADIENT);
 
-        mapFood = new MapFood(SIZE, SIZE, 500, 0.0, "Food", 0.0, 1000.0);
+        mapFood = new MapFood(SIZE, SIZE, 100, 3.0, "Food", 0.0, 1000.0);
         mapFood.setMapLight(mapLight, 2.0);
 
         //Setup lists
@@ -53,20 +53,17 @@ public class Game {
         //Setup microbes
         microbes = new ArrayList<>();
         LinkedList<Gene> genes = new LinkedList<>();
-        genes.add(Genom.allGenes.get(0));
-        genes.add(Genom.allGenes.get(4));
-        microbes.add(new Microbe(new Genom(genes), 25, 25));
-        genes.clear();
-        genes.add(Genom.allGenes.get(2));
-        genes.add(Genom.allGenes.get(4));
-        microbes.add(new Microbe(new Genom(genes), 15, 15));
+
+        for (int i = 0; i < 2; i++) {
+            genes.clear();
+            genes.add(Genome.allGenes.get(0));
+            genes.add(Genome.allGenes.get(Genome.allGenes.size() - 3));
+            microbes.add(new Microbe(new Genome(genes), SIZE / 2, SIZE / 2));
+        }
     }
 
     public void start(int steps){
-        mapOxygen.printConsole(SIZE, SIZE);
-        mapCO2.printConsole(SIZE, SIZE);
-
-        long time, totalTime = System.currentTimeMillis();
+        long time;
         for (int step = 0; step < steps; step++) {
             time = System.currentTimeMillis();
 
@@ -74,28 +71,75 @@ public class Game {
             GasPhisyc.difusionStep(gasMaps);
             mapFood.grow();
             //Microbes
-            Iterator<Microbe> iterator = microbes.listIterator();
-            while(iterator.hasNext()){
-                Microbe microbe = iterator.next();
-                for(Microbe microbe1 : microbe.step(gasMaps, mapLight, mapFood)){
-                    ((ListIterator<Microbe>) iterator).add(microbe1);
-                }
+            ArrayList<Microbe> deleteMicrobes = new ArrayList<>();
+            ArrayList<Microbe> newMicrobes = new ArrayList<>();
+            for (int i = 0; i < microbes.size(); i++) {
+                Microbe microbe = microbes.get(i);
+                newMicrobes.addAll(microbe.step(gasMaps, mapLight, mapFood));
                 if(microbe.isDead())
-                    iterator.remove();
+                    deleteMicrobes.add(microbe);
             }
+            microbes.removeAll(deleteMicrobes);
+            microbes.addAll(newMicrobes);
 
-            MapDouble.printMaps(allMaps, SIZE, SIZE);
-            for (Microbe microbe : microbes) {
-                ConsoleManager.writeln(microbe);
-            }
-            System.out.println("Step time: " + ((System.currentTimeMillis() - time) / 1000.0));
+            printGameUI();
+            ConsoleManager.writeln("Step time: " + ((System.currentTimeMillis() - time) / 1000.0));
             try { Thread.sleep(100); } catch (InterruptedException ex){ex.printStackTrace();}
         }
-        System.out.println("Totatl time: " + ((System.currentTimeMillis() - totalTime) / 1000.0));
+
+        printMaps();
+        printStatistic();
+        ConsoleManager.writeln();
+    }
+
+    private void printStatistic(){
+        int microbesCounter = 0;   //Why?
+        TreeMap<Gene, Integer> genesCounter = new TreeMap<>();
+        TreeMap<String, Integer> genomeCounter = new TreeMap<>();
+        for (Gene gene : Genome.allGenes)
+            genesCounter.put(gene, 0);
+
+        for (Microbe microbe : microbes) {
+            genomeCounter.put(microbe.genome.toString(), genomeCounter.getOrDefault(microbe.genome.toString(), 0) + 1);
+
+            for (Gene gene : microbe.genome.genes)
+                genesCounter.put(gene, genesCounter.get(gene) + 1);
+        }
 
 
-        System.out.println(mapOxygen.getValue(SIZE/2, SIZE/2));
-        System.out.println(mapCO2.getValue(SIZE/2, SIZE/2));
+        ConsoleManager.writeln();
+        for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
+            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.1) {
+                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
+            }
+        }
+
+        ConsoleManager.writeln();
+        for (Gene gene : new TreeSet<>(genesCounter.keySet())) {
+            ConsoleManager.writeln(gene.toString());
+            ConsoleManager.writeln("Count: " + genesCounter.get(gene));
+        }
+    }
+    private void printMaps(){
+        MapDouble.printMaps(allMaps, SIZE, SIZE);
+    }
+    private void printGameUI(){
+        printMaps();
+        TreeMap<Gene, Integer> genesCounter = new TreeMap<>();
+        TreeMap<String, Integer> genomeCounter = new TreeMap<>();
+        for (Gene gene : Genome.allGenes)
+            genesCounter.put(gene, 0);
+
+        for (Microbe microbe : microbes)
+            genomeCounter.put(microbe.genome.toString(), genomeCounter.getOrDefault(microbe.genome.toString(), 0) + 1);
+
+        ConsoleManager.writeln();
+        for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
+            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.5) {
+                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
+            }
+        }
+
     }
 
 }

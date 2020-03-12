@@ -1,11 +1,11 @@
 import logic.Game;
-import logic.microbe.Genom;
+import logic.microbe.Genome;
 
 public class Main {
     public static void main(String args[]){
         System.out.println("Game started.");
 
-        Genom.init();
+        Genome.init();
 
         testCode();
     }
@@ -13,6 +13,6 @@ public class Main {
     public static void testCode(){
         Game game = new Game();
         game.init();
-        game.start(300);
+        game.start(2500);
     }
 }

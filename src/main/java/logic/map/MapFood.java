@@ -9,7 +9,7 @@ public class MapFood extends MapDouble {
 
     private boolean lightBoost = false;
     private MapLight mapLight;
-    public double growCoefficient = 1.0;
+    public double growCoefficient = 2.0;
 
     public MapFood(int x, int y, double initValue, double initIncomeValue, String name, double minLimit, double maxLimit) {
         super(x, y, initValue, name, minLimit, maxLimit);
@@ -28,7 +28,7 @@ public class MapFood extends MapDouble {
 
     public void grow(){
         for (int i = 0; i < map.size(); i++) {
-            map.get(i).value += incomeMap.get(i).value * growCoefficient;
+            map.get(i).value += incomeMap.get(i).value * growCoefficient * mapLight.getIllumination(i);
         }
     }
 }
