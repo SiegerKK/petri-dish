@@ -1,5 +1,6 @@
 package logic.map;
 
+import utils.ConsoleManager;
 import utils.DoubleBox;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class MapGas extends MapDouble {
 
     public void addDeltaMap(){
         for (int i = 0; i < map.size(); i++) {
+//            if(map.get(i).value + deltaMap.get(i).value < 0)
+//                ConsoleManager.writeln("LOX PIDR!!!!");
             map.get(i).value += deltaMap.get(i).value;
         }
     }

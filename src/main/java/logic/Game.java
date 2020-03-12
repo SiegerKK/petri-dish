@@ -13,8 +13,9 @@ import java.util.*;
 
 public class Game {
     public boolean DEBUG_MODE = false;
+    public final int SIZE = 40;
 
-    MapGas mapOxygen;
+    MapGas mapO2;
     MapGas mapCO2;
     MapLight mapLight;
     MapFood mapFood;
@@ -23,16 +24,14 @@ public class Game {
 
     ArrayList<Microbe> microbes;
 
-    public final int SIZE = 40;
-
     public void init(){
-        mapOxygen = new MapGas(SIZE, SIZE, 600.0, "O2", 0.0, 1000.0, 1.0);
-        mapCO2 = new MapGas(SIZE, SIZE, 600.0, "CO2", 0.0, 1000.0, 1.0);
+        mapO2 = new MapGas(SIZE, SIZE, 500.0, "O2", 0.0, 1000.0, 1.0);
+        mapCO2 = new MapGas(SIZE, SIZE, 0.0, "CO2", 0.0, 1000.0, 5.0);
         //------Randomizer--------//
-//        Random random = new Random();
-//        for (int i = 0; i < 10; i++) {
-//            mapCO2.setValue(Math.abs(random.nextInt()%SIZE), Math.abs(random.nextInt()%SIZE), random.nextDouble()*50 + 50);
-//        }
+        Random random = new Random();
+        for (int i = 0; i < 10; i++) {
+            mapCO2.setValue(Math.abs(random.nextInt(SIZE)), Math.abs(random.nextInt(SIZE)), 5000);
+        }
         //------------------------//
 
         mapLight = new MapLight(SIZE, SIZE, "Light");
@@ -43,11 +42,11 @@ public class Game {
 
         //Setup lists
         gasMaps = new ArrayList<>();
-        gasMaps.add(mapOxygen);
+        gasMaps.add(mapO2);
         gasMaps.add(mapCO2);
 
         allMaps = new ArrayList<>();
-        allMaps.add(mapOxygen);
+        allMaps.add(mapO2);
         allMaps.add(mapCO2);
         allMaps.add(mapLight);
         allMaps.add(mapFood);
@@ -65,9 +64,8 @@ public class Game {
     }
 
     public void start(int steps){
-        for (int step = 0; step < steps; step++) {
+        for (int step = 0; step < steps; step++)
             gameLogicStep(true, 100);
-        }
 
         printMaps();
         printStatistic();
@@ -79,10 +77,12 @@ public class Game {
 
         //Physic update
         //TODO: update gases, update food
+        GasPhysic.gasesLogicStep(gasMaps);
 
         //Microbes logic step
         //TODO: code
 
+/*
         //update gasMaps
         GasPhysic.difusionStep(gasMaps);
         mapFood.grow();
@@ -97,6 +97,7 @@ public class Game {
         }
         microbes.removeAll(deleteMicrobes);
         microbes.addAll(newMicrobes);
+*/
 
         //Print UI
         if(printUI) printGameUI(stepTime);
@@ -166,7 +167,10 @@ public class Game {
      * @return height of printed space
      */
     private int printMaps(){
-        MapDouble.printMaps(allMaps, SIZE, SIZE);
+        ArrayList<MapDouble> maps = new ArrayList<>();
+        maps.add(mapO2);
+        maps.add(mapCO2);
+        MapDouble.printMaps(maps, SIZE, SIZE);
         return SIZE + 2;
     }
 

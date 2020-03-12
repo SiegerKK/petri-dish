@@ -9,6 +9,7 @@ public class Main {
         Genome.init();
 
         testCode();
+//        ConsoleManager.writeln(circleTestCode(5));
 
         ConsoleManager.writeln();
     }

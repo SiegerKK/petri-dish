@@ -1,14 +1,69 @@
 package logic;
 
 import logic.map.MapGas;
+import utils.ConsoleManager;
 import utils.DoubleBox;
 
 import java.util.ArrayList;
 
 public class GasPhysic {
-    public static final double SPREAD_COEFFICIENT = 0.2;
+    public static final double SPREAD_COEFFICIENT = 0.1;
+    public static final double RANGE_PHYSIC_LIMIT = 10.0;
 
-//    @Deprecated
+    public static void gasesLogicStep(ArrayList<MapGas> maps){
+        for (MapGas mapGas : maps) 
+            mapGas.resetDeltaMap(0.0);
+
+        for (int cellId = 0; cellId < maps.get(0).getMapSize(); cellId++) {
+            //--------------Initialize calculating----------------//
+            int cellY = cellId / maps.get(0).getSizeX();
+            int cellX = cellId % maps.get(0).getSizeX();
+
+            double localValue = 0.0;
+            double neighborValue = 0.0;
+            double localPressure = 0.0;
+            double neighborPressure = 0.0;
+
+            for (MapGas mapGas : maps)
+                localPressure += mapGas.getValue(cellId) * mapGas.massCoefficient;
+            //----------------------------------------------------//
+
+
+            //--------------------Calculating---------------------//
+            for (int cellIdAnother = 0; cellIdAnother < maps.get(0).getMapSize(); cellIdAnother++) {
+                int cellYAnother = cellIdAnother / maps.get(0).getSizeX();
+                int cellXAnother = cellIdAnother % maps.get(0).getSizeX();
+//                double range = Math.sqrt((cellX - cellXAnother) * (cellX - cellXAnother) + (cellY - cellYAnother) * (cellY - cellYAnother));
+                double range = (cellX - cellXAnother) * (cellX - cellXAnother) + (cellY - cellYAnother) * (cellY - cellYAnother);
+
+                neighborPressure = 0.0;
+                for (MapGas mapGas : maps)
+                    neighborPressure += mapGas.getValue(cellIdAnother) * mapGas.massCoefficient;
+
+                if(range < RANGE_PHYSIC_LIMIT*RANGE_PHYSIC_LIMIT){
+                    //TODO: refactor 124
+                    double R = 1 / Math.sqrt(range) / 124;
+                    double dP = Math.max(localPressure / neighborPressure - 1, 0);
+
+                    if(dP > 0) {
+                        for (MapGas mapGas : maps) {
+                            localValue = mapGas.getValue(cellId);
+                            double massPercent = localValue * mapGas.massCoefficient / localPressure;
+                            double result = localValue * massPercent * dP * R * SPREAD_COEFFICIENT;
+                            mapGas.deltaMap.get(cellIdAnother).value += result;
+                            mapGas.deltaMap.get(cellId).value -= result;
+                        }
+                    }
+                }
+            }
+            //----------------------------------------------------//
+        }
+        for (MapGas mapGas : maps) {
+            mapGas.addDeltaMap();
+        }
+    }
+    
+    @Deprecated
     public static void difusionStep(ArrayList<MapGas> maps){
         for (MapGas mapGas : maps) {
             mapGas.resetDeltaMap(0.0);

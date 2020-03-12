@@ -33,8 +33,8 @@ public abstract class MapDouble {
         setValue(y * sizeX + x, value);
     }
     public void setValue(int id, double value){
-        if(value > maxLimit) value = maxLimit;
-        if(value < minLimit) value = minLimit;
+//        if(value > maxLimit) value = maxLimit;
+//        if(value < minLimit) value = minLimit;
         map.get(id).value = value;
     }
     public double increaseValue(int x, int y, double value){
@@ -134,7 +134,7 @@ public abstract class MapDouble {
                 else if(table[i][j] == 0)
                     ConsoleManager.write(table[i][j], ConsoleManager.COLOR_WHITE);
                 else if(table[i][j] < 0)
-                    System.out.print(".");
+                    ConsoleManager.write("*", ConsoleManager.COLOR_DEFAULT);
             }
             ConsoleManager.writeln();
         }
