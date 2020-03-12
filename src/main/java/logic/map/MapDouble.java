@@ -8,8 +8,7 @@ import java.util.Random;
 
 public abstract class MapDouble {
     protected ArrayList<DoubleBox> map;
-    private int sizeX, sizeY;
-    //ONLY FOR PRINT
+    protected int sizeX, sizeY;
     protected double maxLimit, minLimit;
     public String name;
 
@@ -31,20 +30,27 @@ public abstract class MapDouble {
     }
 
     public void setValue(int x, int y, double value){
-        map.get(y * sizeX + x).value = value;
+        setValue(y * sizeX + x, value);
     }
     public void setValue(int id, double value){
+        if(value > maxLimit) value = maxLimit;
+        if(value < minLimit) value = minLimit;
         map.get(id).value = value;
     }
-    public void increaseValue(int x, int y, double value){
-        map.get(y * sizeX + x).value += value;
+    public double increaseValue(int x, int y, double value){
+        return increaseValue(y * sizeX + x, value);
     }
-    public void increaseValue(int id, double value){
+    public double increaseValue(int id, double value){
+        if(map.get(id).value + value > maxLimit) value = maxLimit - map.get(id).value;
+        if(map.get(id).value + value < minLimit) value = minLimit - map.get(id).value;
+
         map.get(id).value += value;
+
+        return value;
     }
 
     public double getValue(int x, int y){
-        return map.get(y * sizeX + x).value;
+        return getValue(y * sizeX + x);
     }
     public double getValue(int id){
         return map.get(id).value;
@@ -133,6 +139,18 @@ public abstract class MapDouble {
             ConsoleManager.writeln();
         }
     }
+
+    public void reset(double value){
+        for (DoubleBox doubleBox : map) {
+            doubleBox.value = value;
+        }
+    }
+    public void reset(){
+        reset(0.0);
+    }
+
+    //----------------Static methods-----------------//
+
     public static void printMaps(ArrayList<MapDouble> maps, int sizeX, int sizeY){
         for (int i = 0; i < maps.size(); i++) {
             MapDouble mapDouble = maps.get(i);
@@ -142,14 +160,5 @@ public abstract class MapDouble {
         }
         ConsoleManager.shift = 0;
         ConsoleManager.moveCursorDown(sizeY + 2);
-    }
-
-    public void reset(double value){
-        for (DoubleBox doubleBox : map) {
-            doubleBox.value = value;
-        }
-    }
-    public void reset(){
-        reset(0.0);
     }
 }

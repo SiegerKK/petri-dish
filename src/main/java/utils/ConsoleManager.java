@@ -53,7 +53,8 @@ public class ConsoleManager {
      */
     static public synchronized void writeln(){
         System.out.print("\n");
-        moveCursorRight(shift);
+        if(shift > 0)
+            moveCursorRight(shift);
     }
     /**
      * Write str to terminal
@@ -61,7 +62,8 @@ public class ConsoleManager {
      */
     static public synchronized void writeln(Object str){
         System.out.println();
-        moveCursorRight(shift);
+        if(shift > 0)
+            moveCursorRight(shift);
         System.out.print(str);
     }
     /**
@@ -71,7 +73,8 @@ public class ConsoleManager {
      */
     static public synchronized void writeln(Object str, String color){
         System.out.println();
-        moveCursorRight(shift);
+        if(shift > 0)
+            moveCursorRight(shift);
         System.out.print(color + str + COLOR_DEFAULT);
     }
     /**

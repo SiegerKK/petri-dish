@@ -5,9 +5,10 @@ import utils.DoubleBox;
 
 import java.util.ArrayList;
 
-public class GasPhisyc {
+public class GasPhysic {
     public static final double SPREAD_COEFFICIENT = 0.2;
 
+//    @Deprecated
     public static void difusionStep(ArrayList<MapGas> maps){
         for (MapGas mapGas : maps) {
             mapGas.resetDeltaMap(0.0);

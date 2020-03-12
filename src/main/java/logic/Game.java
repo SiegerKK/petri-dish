@@ -12,6 +12,8 @@ import utils.ConsoleManager;
 import java.util.*;
 
 public class Game {
+    public boolean DEBUG_MODE = false;
+
     MapGas mapOxygen;
     MapGas mapCO2;
     MapLight mapLight;
@@ -63,33 +65,71 @@ public class Game {
     }
 
     public void start(int steps){
-        long time;
         for (int step = 0; step < steps; step++) {
-            time = System.currentTimeMillis();
-
-            //update gasMaps
-            GasPhisyc.difusionStep(gasMaps);
-            mapFood.grow();
-            //Microbes
-            ArrayList<Microbe> deleteMicrobes = new ArrayList<>();
-            ArrayList<Microbe> newMicrobes = new ArrayList<>();
-            for (int i = 0; i < microbes.size(); i++) {
-                Microbe microbe = microbes.get(i);
-                newMicrobes.addAll(microbe.step(gasMaps, mapLight, mapFood));
-                if(microbe.isDead())
-                    deleteMicrobes.add(microbe);
-            }
-            microbes.removeAll(deleteMicrobes);
-            microbes.addAll(newMicrobes);
-
-            printGameUI();
-            ConsoleManager.writeln("Step time: " + ((System.currentTimeMillis() - time) / 1000.0));
-            try { Thread.sleep(100); } catch (InterruptedException ex){ex.printStackTrace();}
+            gameLogicStep(true, 100);
         }
 
         printMaps();
         printStatistic();
         ConsoleManager.writeln();
+    }
+
+    public void gameLogicStep(boolean printUI, int timePause){
+        long stepTime = System.currentTimeMillis();
+
+        //Physic update
+        //TODO: update gases, update food
+
+        //Microbes logic step
+        //TODO: code
+
+        //update gasMaps
+        GasPhysic.difusionStep(gasMaps);
+        mapFood.grow();
+        //Microbes
+        ArrayList<Microbe> deleteMicrobes = new ArrayList<>();
+        ArrayList<Microbe> newMicrobes = new ArrayList<>();
+        for (int i = 0; i < microbes.size(); i++) {
+            Microbe microbe = microbes.get(i);
+            newMicrobes.addAll(microbe.step(gasMaps, mapLight, mapFood));
+            if(microbe.isDead())
+                deleteMicrobes.add(microbe);
+        }
+        microbes.removeAll(deleteMicrobes);
+        microbes.addAll(newMicrobes);
+
+        //Print UI
+        if(printUI) printGameUI(stepTime);
+
+        //Pause before next step
+        if(timePause > 0) try { Thread.sleep(timePause); } catch (InterruptedException ex){ex.printStackTrace();}
+    }
+
+    private void printGameUI(long stepTimeDebug){
+        int heightUI = printMaps();
+
+        TreeMap<Gene, Integer> genesCounter = new TreeMap<>();
+        TreeMap<String, Integer> genomeCounter = new TreeMap<>();
+        for (Gene gene : Genome.allGenes)
+            genesCounter.put(gene, 0);
+
+        for (Microbe microbe : microbes)
+            genomeCounter.put(microbe.genome.toString(), genomeCounter.getOrDefault(microbe.genome.toString(), 0) + 1);
+
+        for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
+            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.5) {
+                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
+                heightUI++;
+            }
+        }
+
+        //Print debug info
+        if(DEBUG_MODE) {
+            ConsoleManager.writeln("Step time: " + ((System.currentTimeMillis() - stepTimeDebug) / 1000.0));
+            heightUI++;
+        }
+
+        ConsoleManager.moveCursorUp(heightUI);
     }
 
     private void printStatistic(){
@@ -120,26 +160,14 @@ public class Game {
             ConsoleManager.writeln("Count: " + genesCounter.get(gene));
         }
     }
-    private void printMaps(){
+
+    /**
+     *
+     * @return height of printed space
+     */
+    private int printMaps(){
         MapDouble.printMaps(allMaps, SIZE, SIZE);
-    }
-    private void printGameUI(){
-        printMaps();
-        TreeMap<Gene, Integer> genesCounter = new TreeMap<>();
-        TreeMap<String, Integer> genomeCounter = new TreeMap<>();
-        for (Gene gene : Genome.allGenes)
-            genesCounter.put(gene, 0);
-
-        for (Microbe microbe : microbes)
-            genomeCounter.put(microbe.genome.toString(), genomeCounter.getOrDefault(microbe.genome.toString(), 0) + 1);
-
-        ConsoleManager.writeln();
-        for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
-            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.5) {
-                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
-            }
-        }
-
+        return SIZE + 2;
     }
 
 }
