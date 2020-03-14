@@ -1,9 +1,6 @@
 package logic;
 
-import logic.map.MapDouble;
-import logic.map.MapFood;
-import logic.map.MapGas;
-import logic.map.MapLight;
+import logic.map.*;
 import logic.microbe.Gene;
 import logic.microbe.Genome;
 import logic.microbe.Microbe;
@@ -167,10 +164,10 @@ public class Game {
      * @return height of printed space
      */
     private int printMaps(){
-        ArrayList<MapDouble> maps = new ArrayList<>();
+        ArrayList<IMap> maps = new ArrayList<>();
         maps.add(mapO2);
         maps.add(mapCO2);
-        MapDouble.printMaps(maps, SIZE, SIZE);
+        IMap.printMaps(maps, SIZE, SIZE);
         return SIZE + 2;
     }
 

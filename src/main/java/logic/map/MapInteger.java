@@ -1,21 +1,21 @@
 package logic.map;
 
 import utils.ConsoleManager;
-import utils.boxes.DoubleBox;
+import utils.boxes.IntegerBox;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class MapDouble implements IMap<Double> {
-    protected ArrayList<DoubleBox> map;
+public abstract class MapInteger implements IMap<Integer> {
+    protected ArrayList<IntegerBox> map;
     protected int sizeX, sizeY;
-    protected double maxLimit, minLimit;
+    protected int maxLimit, minLimit;
     public String name;
 
-    public MapDouble(int x, int y, double initValue, String name, double minLimit, double maxLimit){
+    public MapInteger(int x, int y, int initValue, String name, int minLimit, int maxLimit){
         init(x, y, initValue, name, minLimit, maxLimit);
     }
-    public void init(int x, int y, double value, String name, double minLimit, double maxLimit){
+    public void init(int x, int y, int value, String name, int minLimit, int maxLimit){
         map = new ArrayList<>();
         this.name = name;
         this.minLimit = minLimit;
@@ -24,36 +24,36 @@ public abstract class MapDouble implements IMap<Double> {
         sizeY = y;
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
-                map.add(new DoubleBox(value));
+                map.add(new IntegerBox(value));
             }
         }
     }
 
-    public double getValue(int x, int y){
+    public int getValue(int x, int y){
         return getValue(y * sizeX + x);
     }
     @Override
-    public Double getValue(int id){
-        return map.get(id).value;
+    public Integer getValue(int id) {
+        return map.get(id).getValue();
     }
-    public void setValue(int x, int y, double value){
+
+    public void setValue(int x, int y, int value){
         setValue(y * sizeX + x, value);
     }
     @Override
-    public void setValue(int id, Double value){
-//        if(value > maxLimit) value = maxLimit;
-//        if(value < minLimit) value = minLimit;
-        map.get(id).value = value;
+    public void setValue(int id, Integer value) {
+        map.get(id).setValue(value);
     }
-    public double increaseValue(int x, int y, double value){
+
+    public double increaseValue(int x, int y, int value){
         return increaseValue(y * sizeX + x, value);
     }
     @Override
-    public Double increaseValue(int id, Double value){
-        if(map.get(id).value + value > maxLimit) value = maxLimit - map.get(id).value;
-        if(map.get(id).value + value < minLimit) value = minLimit - map.get(id).value;
+    public Integer increaseValue(int id, Integer value){
+        if(map.get(id).getValue() + value > maxLimit) value = maxLimit - map.get(id).getValue();
+        if(map.get(id).getValue() + value < minLimit) value = minLimit - map.get(id).getValue();
 
-        map.get(id).value += value;
+        map.get(id).addValue(value);
 
         return value;
     }
@@ -79,14 +79,9 @@ public abstract class MapDouble implements IMap<Double> {
      * @param noiseCoefficient must be in range 0.0 - 1.0
      */
     public void addNoise(double noiseCoefficient){
-        /*if(noiseCoefficient > 1.0 || noiseCoefficient < 0.0) {
-            System.out.println("ERROR: noiseCoefficient not in range " + noiseCoefficient);
-            return;
-        }*/
-
         Random random = new Random();
-        for (DoubleBox doubleBox : map)
-            doubleBox.value *= (1.0 + (noiseCoefficient * (random.nextDouble() - 0.5) * 2));
+        for (IntegerBox integerBox : map)
+            integerBox.multiplyValue(1 + (int) ((noiseCoefficient * (random.nextDouble() - 0.5) * 2) + 0.5));
     }
 
     @Override
@@ -145,12 +140,12 @@ public abstract class MapDouble implements IMap<Double> {
     }
 
     @Override
-    public void reset(Double value){
-        for (DoubleBox doubleBox : map) {
-            doubleBox.value = value;
+    public void reset(Integer value){
+        for (IntegerBox integerBox : map) {
+            integerBox.setValue(value);
         }
     }
     public void reset(){
-        reset(0.0);
+        reset(0);
     }
 }

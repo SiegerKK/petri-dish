@@ -1,6 +1,6 @@
 package logic.map;
 
-import utils.DoubleBox;
+import utils.boxes.DoubleBox;
 
 import java.util.ArrayList;
 

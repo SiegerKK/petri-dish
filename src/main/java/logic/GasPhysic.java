@@ -1,8 +1,6 @@
 package logic;
 
 import logic.map.MapGas;
-import utils.ConsoleManager;
-import utils.DoubleBox;
 
 import java.util.ArrayList;
 
@@ -50,8 +48,8 @@ public class GasPhysic {
                             localValue = mapGas.getValue(cellId);
                             double massPercent = localValue * mapGas.massCoefficient / localPressure;
                             double result = localValue * massPercent * dP * R * SPREAD_COEFFICIENT;
-                            mapGas.deltaMap.get(cellIdAnother).value += result;
-                            mapGas.deltaMap.get(cellId).value -= result;
+                            mapGas.increaseDeltaMapValue(cellIdAnother, result);
+                            mapGas.increaseDeltaMapValue(cellId, result);
                         }
                     }
                 }
@@ -99,13 +97,13 @@ public class GasPhysic {
                     if(localPressure > neighborPressure) {
                         massPartPercent = mapGas.getValue(i) * mapGas.massCoefficient / localPressure;
                         gasUnitsToTranslate = localValue * massPartPercent * (localPressure - neighborPressure) / localPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value -= gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value += gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, -gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, gasUnitsToTranslate);
                     } else if(localPressure < neighborPressure) {
                         massPartPercent = mapGas.getValue(id) * mapGas.massCoefficient / neighborPressure;
                         gasUnitsToTranslate = neighborValue * massPartPercent * (neighborPressure - localPressure) / neighborPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value += gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value -= gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, -gasUnitsToTranslate);
                     }
                 }
             }
@@ -126,13 +124,13 @@ public class GasPhysic {
                     if(localPressure > neighborPressure) {
                         massPartPercent = mapGas.getValue(i) * mapGas.massCoefficient / localPressure;
                         gasUnitsToTranslate = localValue * massPartPercent * (localPressure - neighborPressure) / localPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value -= gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value += gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, -gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, gasUnitsToTranslate);
                     } else if(localPressure < neighborPressure) {
                         massPartPercent = mapGas.getValue(id) * mapGas.massCoefficient / neighborPressure;
                         gasUnitsToTranslate = neighborValue * massPartPercent * (neighborPressure - localPressure) / neighborPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value += gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value -= gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, -gasUnitsToTranslate);
                     }
                 }
             }
@@ -153,13 +151,13 @@ public class GasPhysic {
                     if(localPressure > neighborPressure) {
                         massPartPercent = mapGas.getValue(i) * mapGas.massCoefficient / localPressure;
                         gasUnitsToTranslate = localValue * massPartPercent * (localPressure - neighborPressure) / localPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value -= gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value += gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, -gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, gasUnitsToTranslate);
                     } else if(localPressure < neighborPressure) {
                         massPartPercent = mapGas.getValue(id) * mapGas.massCoefficient / neighborPressure;
                         gasUnitsToTranslate = neighborValue * massPartPercent * (neighborPressure - localPressure) / neighborPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value += gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value -= gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, -gasUnitsToTranslate);
                     }
                 }
             }
@@ -180,13 +178,13 @@ public class GasPhysic {
                     if(localPressure > neighborPressure) {
                         massPartPercent = mapGas.getValue(i) * mapGas.massCoefficient / localPressure;
                         gasUnitsToTranslate = localValue * massPartPercent * (localPressure - neighborPressure) / localPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value -= gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value += gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, -gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, gasUnitsToTranslate);
                     } else if(localPressure < neighborPressure) {
                         massPartPercent = mapGas.getValue(id) * mapGas.massCoefficient / neighborPressure;
                         gasUnitsToTranslate = neighborValue * massPartPercent * (neighborPressure - localPressure) / neighborPressure * SPREAD_COEFFICIENT;
-                        mapGas.deltaMap.get(i).value += gasUnitsToTranslate;
-                        mapGas.deltaMap.get(id).value -= gasUnitsToTranslate;
+                        mapGas.increaseDeltaMapValue(i, gasUnitsToTranslate);
+                        mapGas.increaseDeltaMapValue(id, -gasUnitsToTranslate);
                     }
                 }
             }

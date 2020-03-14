@@ -3,6 +3,7 @@ package logic.microbe;
 import logic.map.MapFood;
 import logic.map.MapGas;
 import logic.map.MapLight;
+import utils.coord.CoordInt;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class Microbe {
 
     public Genome genome;
 
-    public int x, y;
+    public CoordInt coord;
 
     public double energyMax = 100;
     public double o2Max = 10;
@@ -25,8 +26,7 @@ public class Microbe {
 
     public Microbe(Genome genome, int x, int y){
         this.genome = new Genome(genome);
-        this.x = x;
-        this.y = y;
+        coord = new CoordInt(x, y);
     }
     public ArrayList<Microbe> step(ArrayList<MapGas> mapGases, MapLight mapLight, MapFood mapFood){
         ArrayList<Microbe> newMicrobes = new ArrayList<>();
@@ -50,7 +50,7 @@ public class Microbe {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("\n" + genome + " (" + x + ", " + y + ")");
+        str.append("\n" + genome + " (" + coord.getX() + ", " + coord.getY() + ")");
         str.append("\n\tEnergy: " + energy + "/" + energyMax);
         str.append("\n\tO2:     " + o2 + "/" + o2Max);
         str.append("\n\tCO2:    " + co2 + "/" + co2Max);

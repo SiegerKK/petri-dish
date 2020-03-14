@@ -136,20 +136,20 @@ public class Gene implements Comparable{
                 mapO2 = mapGas;
 
         microbe.energyMax = Microbe.ENERGY_MAX + energyMaxSummand;
-        if(mapFood.getValue(microbe.x, microbe.y) > -foodIncomeSuccess
-                && mapO2.getValue(microbe.x, microbe.y) > -o2IncomeSuccess) {
-            mapFood.increaseValue(microbe.x, microbe.y, foodIncomeSuccess);
-            mapO2.increaseValue(microbe.x, microbe.y, o2IncomeSuccess);
+        if(mapFood.getValue(microbe.coord.getX(), microbe.coord.getY()) > -foodIncomeSuccess
+                && mapO2.getValue(microbe.coord.getX(), microbe.coord.getY()) > -o2IncomeSuccess) {
+            mapFood.increaseValue(microbe.coord.getX(), microbe.coord.getY(), foodIncomeSuccess);
+            mapO2.increaseValue(microbe.coord.getX(), microbe.coord.getY(), o2IncomeSuccess);
         } else {
             microbe.energy += energyIncomeFail;
         }
     }
     private static void energyFood(Microbe microbe, MapFood mapFood,
                                    double energyIncomeSuccess, double foodIncomeSuccess, double energyIncomeFail){
-        if(mapFood.getValue(microbe.x, microbe.y) > -foodIncomeSuccess
+        if(mapFood.getValue(microbe.coord.getX(), microbe.coord.getY()) > -foodIncomeSuccess
                 && microbe.energy + energyIncomeSuccess < microbe.energyMax) {
             microbe.energy += energyIncomeSuccess;
-            mapFood.increaseValue(microbe.x, microbe.y, foodIncomeSuccess);
+            mapFood.increaseValue(microbe.coord.getX(), microbe.coord.getY(), foodIncomeSuccess);
         } else {
             microbe.energy += energyIncomeFail;
         }
@@ -162,12 +162,12 @@ public class Gene implements Comparable{
             if(mapGas.name.equals("O2"))
                 mapO2 = mapGas;
 
-        if(mapFood.getValue(microbe.x, microbe.y) > foodIncomeSuccess
+        if(mapFood.getValue(microbe.coord.getX(), microbe.coord.getY()) > foodIncomeSuccess
                 && microbe.energy + energyIncomeSuccess < microbe.energyMax
-                && mapO2.getValue(microbe.x, microbe.y) > o2IncomeSuccess) {
+                && mapO2.getValue(microbe.coord.getX(), microbe.coord.getY()) > o2IncomeSuccess) {
             microbe.energy += energyIncomeSuccess;
-            mapFood.increaseValue(microbe.x, microbe.y, foodIncomeSuccess);
-            mapO2.increaseValue(microbe.x, microbe.y, o2IncomeSuccess);
+            mapFood.increaseValue(microbe.coord.getX(), microbe.coord.getY(), foodIncomeSuccess);
+            mapO2.increaseValue(microbe.coord.getX(), microbe.coord.getY(), o2IncomeSuccess);
         } else {
             microbe.energy += energyIncomeFail;
         }
@@ -185,14 +185,14 @@ public class Gene implements Comparable{
                 mapO2 = mapGas;
         }
 
-        if(mapLight.getIllumination(microbe.x, microbe.y) > lightRequired
+        if(mapLight.getIllumination(microbe.coord.getX(), microbe.coord.getY()) > lightRequired
                 && microbe.energy + energyIncomeSuccess < microbe.energyMax
-                && mapCO2.getValue(microbe.x, microbe.y) > -co2IncomeSuccess) {
+                && mapCO2.getValue(microbe.coord.getX(), microbe.coord.getY()) > -co2IncomeSuccess) {
             microbe.energy += energyIncomeSuccess *
-                    ((mapLight.getIllumination(microbe.x, microbe.y) - lightRequired)
+                    ((mapLight.getIllumination(microbe.coord.getX(), microbe.coord.getY()) - lightRequired)
                     / (1.0 - lightRequired));
-            mapCO2.increaseValue(microbe.x, microbe.y, co2IncomeSuccess);
-            mapO2.increaseValue(microbe.x, microbe.y, o2OutcomeSuccess);
+            mapCO2.increaseValue(microbe.coord.getX(), microbe.coord.getY(), co2IncomeSuccess);
+            mapO2.increaseValue(microbe.coord.getX(), microbe.coord.getY(), o2OutcomeSuccess);
         } else {
             microbe.energy += energyIncomeFail;
         }
@@ -209,8 +209,8 @@ public class Gene implements Comparable{
                 && microbe.energy > microbe.genome.genes.size() * DUPLICATE_COST_BY_GENE) {
             Random random = new Random();
             if(random.nextDouble() < chanceToDuplicate){
-                int x = microbe.x;
-                int y = microbe.y;
+                int x = microbe.coord.getX();
+                int y = microbe.coord.getY();
                 if(random.nextDouble() < chaneToDuplicateAnotherPlace){
                     switch (random.nextInt(4)){
                         case 0:
