@@ -5,8 +5,11 @@ import utils.ConsoleManager;
 import java.util.ArrayList;
 
 public interface IMap<T> {
+    public T getValue(int x, int y);
     public T getValue(int id);
+    public void setValue(int x, int y, T value);
     public void setValue(int id, T value);
+    public T increaseValue(int x, int y, T value);
     public T increaseValue(int id, T value);
 
     public int getMapSize();

@@ -16,19 +16,25 @@ public class Game {
     MapGas mapCO2;
     MapLight mapLight;
     MapFood mapFood;
+    MapMicrobe mapMicrobes;
     ArrayList<MapGas> gasMaps;
     ArrayList<MapDouble> allMaps;
 
     ArrayList<Microbe> microbes;
 
     public void init(){
+        //Setup microbes
+        microbes = new ArrayList<>();
+        LinkedList<Gene> genes = new LinkedList<>();
+
+        //Setup gases
         mapO2 = new MapGas(SIZE, SIZE, 500.0, "O2", 0.0, 1000.0, 1.0);
-        mapCO2 = new MapGas(SIZE, SIZE, 0.0, "CO2", 0.0, 1000.0, 5.0);
+        mapCO2 = new MapGas(SIZE, SIZE, 300.0, "CO2", 0.0, 1000.0, 1.0);
         //------Randomizer--------//
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            mapCO2.setValue(Math.abs(random.nextInt(SIZE)), Math.abs(random.nextInt(SIZE)), 5000);
-        }
+//        Random random = new Random();
+//        for (int i = 0; i < 10; i++) {
+//            mapCO2.setValue(Math.abs(random.nextInt(SIZE)), Math.abs(random.nextInt(SIZE)), 5000.0);
+//        }
         //------------------------//
 
         mapLight = new MapLight(SIZE, SIZE, "Light");
@@ -36,6 +42,8 @@ public class Game {
 
         mapFood = new MapFood(SIZE, SIZE, 100, 3.0, "Food", 0.0, 1000.0);
         mapFood.setMapLight(mapLight, 2.0);
+
+        mapMicrobes = new MapMicrobe(SIZE, SIZE, "Microbes", 1000, microbes);
 
         //Setup lists
         gasMaps = new ArrayList<>();
@@ -48,10 +56,6 @@ public class Game {
         allMaps.add(mapLight);
         allMaps.add(mapFood);
 
-        //Setup microbes
-        microbes = new ArrayList<>();
-        LinkedList<Gene> genes = new LinkedList<>();
-
         for (int i = 0; i < 2; i++) {
             genes.clear();
             genes.add(Genome.allGenes.get(0));
@@ -62,7 +66,7 @@ public class Game {
 
     public void start(int steps){
         for (int step = 0; step < steps; step++)
-            gameLogicStep(true, 100);
+            gameLogicStep(true, 10);
 
         printMaps();
         printStatistic();
@@ -74,15 +78,15 @@ public class Game {
 
         //Physic update
         //TODO: update gases, update food
-        GasPhysic.gasesLogicStep(gasMaps);
+//        GasPhysic.gasesLogicStep(gasMaps);
+        GasPhysic.difusionStep(gasMaps);
+
+        //Food update
+        mapFood.grow();
 
         //Microbes logic step
         //TODO: code
 
-/*
-        //update gasMaps
-        GasPhysic.difusionStep(gasMaps);
-        mapFood.grow();
         //Microbes
         ArrayList<Microbe> deleteMicrobes = new ArrayList<>();
         ArrayList<Microbe> newMicrobes = new ArrayList<>();
@@ -94,36 +98,41 @@ public class Game {
         }
         microbes.removeAll(deleteMicrobes);
         microbes.addAll(newMicrobes);
-*/
 
         //Print UI
-        if(printUI) printGameUI(stepTime);
+        if(printUI) printGameUI(System.currentTimeMillis() - stepTime);
 
         //Pause before next step
         if(timePause > 0) try { Thread.sleep(timePause); } catch (InterruptedException ex){ex.printStackTrace();}
     }
 
     private void printGameUI(long stepTimeDebug){
+        long timeRender = System.currentTimeMillis();
+
         int heightUI = printMaps();
 
-        TreeMap<Gene, Integer> genesCounter = new TreeMap<>();
         TreeMap<String, Integer> genomeCounter = new TreeMap<>();
-        for (Gene gene : Genome.allGenes)
-            genesCounter.put(gene, 0);
 
         for (Microbe microbe : microbes)
             genomeCounter.put(microbe.genome.toString(), genomeCounter.getOrDefault(microbe.genome.toString(), 0) + 1);
 
         for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
             if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.5) {
-                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
+                ConsoleManager.writeln(genomeIndex + " " + Genome.getSymbol(genomeIndex) + " -> " + genomeCounter.get(genomeIndex) + "       ");
                 heightUI++;
             }
         }
 
+        timeRender = System.currentTimeMillis() - timeRender;
+
         //Print debug info
         if(DEBUG_MODE) {
-            ConsoleManager.writeln("Step time: " + ((System.currentTimeMillis() - stepTimeDebug) / 1000.0));
+            ConsoleManager.writeln("Step time: " + stepTimeDebug);
+            ConsoleManager.writeln("Render time: " + timeRender);
+            heightUI += 2;
+        }
+        for (int i = 0; i < 2; i++) {
+            ConsoleManager.writeln("                                                                                                ");
             heightUI++;
         }
 
@@ -147,15 +156,15 @@ public class Game {
 
         ConsoleManager.writeln();
         for (String genomeIndex : new TreeSet<>(genomeCounter.keySet())) {
-            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.1) {
-                ConsoleManager.writeln(genomeIndex + " -> " + genomeCounter.get(genomeIndex));
+            if(genomeCounter.get(genomeIndex) > microbes.size() / 100.0 * 0.0) {
+                ConsoleManager.writeln(genomeIndex + " " + Genome.getSymbol(genomeIndex )+ " -> " + genomeCounter.get(genomeIndex) + "          ");
             }
         }
 
         ConsoleManager.writeln();
         for (Gene gene : new TreeSet<>(genesCounter.keySet())) {
-            ConsoleManager.writeln(gene.toString());
-            ConsoleManager.writeln("Count: " + genesCounter.get(gene));
+            ConsoleManager.writeln(gene.toString() + "          ");
+            ConsoleManager.writeln("Count: " + genesCounter.get(gene) + "          ");
         }
     }
 
@@ -166,7 +175,9 @@ public class Game {
     private int printMaps(){
         ArrayList<IMap> maps = new ArrayList<>();
         maps.add(mapO2);
-        maps.add(mapCO2);
+        maps.add(mapFood);
+        maps.add(mapMicrobes);
+
         IMap.printMaps(maps, SIZE, SIZE);
         return SIZE + 2;
     }

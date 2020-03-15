@@ -1,5 +1,6 @@
 package logic.map;
 
+import utils.Color;
 import utils.ConsoleManager;
 import utils.boxes.IntegerBox;
 
@@ -29,23 +30,24 @@ public abstract class MapInteger implements IMap<Integer> {
         }
     }
 
-    public int getValue(int x, int y){
+    @Override
+    public Integer getValue(int x, int y){
         return getValue(y * sizeX + x);
     }
     @Override
     public Integer getValue(int id) {
         return map.get(id).getValue();
     }
-
-    public void setValue(int x, int y, int value){
+    @Override
+    public void setValue(int x, int y, Integer value){
         setValue(y * sizeX + x, value);
     }
     @Override
     public void setValue(int id, Integer value) {
         map.get(id).setValue(value);
     }
-
-    public double increaseValue(int x, int y, int value){
+    @Override
+    public Integer increaseValue(int x, int y, Integer value){
         return increaseValue(y * sizeX + x, value);
     }
     @Override
@@ -121,19 +123,19 @@ public abstract class MapInteger implements IMap<Integer> {
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
                 if(table[i][j] > 9)
-                    ConsoleManager.write("*", ConsoleManager.COLOR_RED);
+                    ConsoleManager.write("*", Color.COLOR_RED);
                 else if(table[i][j] >= 8)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_RED);
+                    ConsoleManager.write(table[i][j], Color.COLOR_RED);
                 else if(table[i][j] >= 5)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_YELLOW);
+                    ConsoleManager.write(table[i][j], Color.COLOR_YELLOW);
                 else if(table[i][j] >= 3)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_GREEN);
+                    ConsoleManager.write(table[i][j], Color.COLOR_GREEN);
                 else if(table[i][j] >= 1)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_GREEN);
+                    ConsoleManager.write(table[i][j], Color.COLOR_GREEN);
                 else if(table[i][j] == 0)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_WHITE);
+                    ConsoleManager.write(table[i][j], Color.COLOR_WHITE);
                 else if(table[i][j] < 0)
-                    ConsoleManager.write("*", ConsoleManager.COLOR_DEFAULT);
+                    ConsoleManager.write("*", Color.COLOR_DEFAULT);
             }
             ConsoleManager.writeln();
         }

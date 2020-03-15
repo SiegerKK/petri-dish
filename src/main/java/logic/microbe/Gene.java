@@ -3,6 +3,8 @@ package logic.microbe;
 import logic.map.MapFood;
 import logic.map.MapGas;
 import logic.map.MapLight;
+import logic.map.MapMicrobe;
+import utils.Color;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,12 +25,34 @@ public class Gene implements Comparable{
     public static final String DUPLICATE_2 = "duplicate_2";
     public static final String DUPLICATE_3 = "duplicate_3";
 
-    public String index;
-    public ArrayList<String> perks;
+    String index;
+    ArrayList<String> perks;
+    Color color;
 
-    public Gene(String index, ArrayList<String> perks){
+    public Gene(String index, ArrayList<String> perks, Color color){
         this.index = index;
         this.perks = new ArrayList<>(perks);
+        this.color = color;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+    public ArrayList<String> getPerks() {
+        return perks;
+    }
+    public Color getColor() {
+        return color;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
+    public void setPerks(ArrayList<String> perks) {
+        this.perks = perks;
+    }
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public String getSubtype(){

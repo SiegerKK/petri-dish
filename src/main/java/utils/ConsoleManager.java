@@ -1,30 +1,10 @@
 package utils;
 
-import java.io.FileWriter;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static utils.Color.*;
+
 public class ConsoleManager {
-    static public final String COLOR_DEFAULT = "\033[39m";
-
-    static public final String COLOR_BLACK = "\033[30m";
-    static public final String COLOR_RED = "\033[31m";
-    static public final String COLOR_GREEN = "\033[32m";
-    static public final String COLOR_YELLOW = "\033[33m";
-    static public final String COLOR_BLUE = "\033[34m";
-    static public final String COLOR_MAGENTA = "\033[35m";
-    static public final String COLOR_CYAN = "\033[36m";
-    static public final String COLOR_WHITE = "\033[37m";
-    static public final String COLOR_BLACK_BRIGHT = "\033[30;1m";
-    static public final String COLOR_RED_BRIGHT = "\033[31;1m";
-    static public final String COLOR_GREEN_BRIGHT = "\033[32;1m";
-    static public final String COLOR_YELLOW_BRIGHT = "\033[33;1m";
-    static public final String COLOR_BLUE_BRIGHT = "\033[34;1m";
-    static public final String COLOR_MAGENTA_BRIGHT = "\033[35;1m";
-    static public final String COLOR_CYAN_BRIGHT = "\033[36;1m";
-    static public final String COLOR_WHITE_BRIGHT = "\033[37;1m";
-
     static public final String MOVE_UP = "\u001b[1A";
     static public final String MOVE_DOWN = "\u001b[1B";
     static public final String MOVE_RIGHT = "\u001b[1C";

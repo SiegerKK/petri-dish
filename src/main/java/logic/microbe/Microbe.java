@@ -3,6 +3,7 @@ package logic.microbe;
 import logic.map.MapFood;
 import logic.map.MapGas;
 import logic.map.MapLight;
+import logic.map.MapMicrobe;
 import utils.coord.CoordInt;
 
 import java.util.ArrayList;

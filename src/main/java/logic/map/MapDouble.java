@@ -1,5 +1,6 @@
 package logic.map;
 
+import utils.Color;
 import utils.ConsoleManager;
 import utils.boxes.DoubleBox;
 
@@ -29,14 +30,16 @@ public abstract class MapDouble implements IMap<Double> {
         }
     }
 
-    public double getValue(int x, int y){
+    @Override
+    public Double getValue(int x, int y){
         return getValue(y * sizeX + x);
     }
     @Override
     public Double getValue(int id){
         return map.get(id).value;
     }
-    public void setValue(int x, int y, double value){
+    @Override
+    public void setValue(int x, int y, Double value){
         setValue(y * sizeX + x, value);
     }
     @Override
@@ -45,7 +48,8 @@ public abstract class MapDouble implements IMap<Double> {
 //        if(value < minLimit) value = minLimit;
         map.get(id).value = value;
     }
-    public double increaseValue(int x, int y, double value){
+    @Override
+    public Double increaseValue(int x, int y, Double value){
         return increaseValue(y * sizeX + x, value);
     }
     @Override
@@ -126,19 +130,19 @@ public abstract class MapDouble implements IMap<Double> {
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
                 if(table[i][j] > 9)
-                    ConsoleManager.write("*", ConsoleManager.COLOR_RED);
+                    ConsoleManager.write("*", Color.COLOR_RED);
                 else if(table[i][j] >= 8)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_RED);
+                    ConsoleManager.write(table[i][j], Color.COLOR_RED);
                 else if(table[i][j] >= 5)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_YELLOW);
+                    ConsoleManager.write(table[i][j], Color.COLOR_YELLOW);
                 else if(table[i][j] >= 3)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_GREEN);
+                    ConsoleManager.write(table[i][j], Color.COLOR_GREEN);
                 else if(table[i][j] >= 1)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_GREEN);
+                    ConsoleManager.write(table[i][j], Color.COLOR_GREEN);
                 else if(table[i][j] == 0)
-                    ConsoleManager.write(table[i][j], ConsoleManager.COLOR_WHITE);
+                    ConsoleManager.write(table[i][j], Color.COLOR_WHITE);
                 else if(table[i][j] < 0)
-                    ConsoleManager.write("*", ConsoleManager.COLOR_DEFAULT);
+                    ConsoleManager.write("*", Color.COLOR_DEFAULT);
             }
             ConsoleManager.writeln();
         }
